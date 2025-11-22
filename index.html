@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏨 Grand Hotel Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="hotel-logo">
+                <i class="fas fa-hotel"></i>
+            </div>
+            <h1>Grand Hotel</h1>
+            <p>Management System</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="main-app hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-hotel"></i>
+                    <span>Grand Hotel</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search rooms, guests..." id="global-search">
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notification-count">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="profile-pic">A</div>
+                        <div class="user-info">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-menu">
+                <div class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-chart-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" data-page="booking">
+                    <i class="fas fa-bed"></i>
+                    <span>Room Booking</span>
+                </div>
+                <div class="menu-item" data-page="rooms">
+                    <i class="fas fa-door-open"></i>
+                    <span>Room Management</span>
+                </div>
+                <div class="menu-item" data-page="guests">
+                    <i class="fas fa-users"></i>
+                    <span>Guest Management</span>
+                </div>
+                <div class="menu-item" data-page="food">
+                    <i class="fas fa-utensils"></i>
+                    <span>Food Service</span>
+                </div>
+                <div class="menu-item" data-page="billing">
+                    <i class="fas fa-receipt"></i>
+                    <span>Billing</span>
+                </div>
+                <div class="menu-item" data-page="reports">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports</span>
+                </div>
+                <div class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="current-time" id="current-time"></div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Welcome to Grand Hotel Management System</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card total-rooms">
+                        <div class="stat-icon">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-rooms">60</h3>
+                            <p>Total Rooms</p>
+                        </div>
+                    </div>
+                    <div class="stat-card occupied-rooms">
+                        <div class="stat-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="occupied-rooms">0</h3>
+                            <p>Occupied Rooms</p>
+                        </div>
+                    </div>
+                    <div class="stat-card available-rooms">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="available-rooms">60</h3>
+                            <p>Available Rooms</p>
+                        </div>
+                    </div>
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-revenue">₹0</h3>
+                            <p>Today's Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Occupancy Rate</h3>
+                        <div class="chart-container">
+                            <canvas id="occupancyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Recent Activities</h3>
+                        <div class="activity-list" id="activity-list">
+                            <div class="activity-item">
+                                <i class="fas fa-clock"></i>
+                                <span>System initialized</span>
+                                <small id="init-time"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showPage('booking')">
+                            <i class="fas fa-plus"></i> New Booking
+                        </button>
+                        <button class="btn btn-success" onclick="showPage('rooms')">
+                            <i class="fas fa-door-open"></i> Check Rooms
+                        </button>
+                        <button class="btn btn-info" onclick="showPage('billing')">
+                            <i class="fas fa-receipt"></i> Generate Bill
+                        </button>
+                        <button class="btn btn-warning" onclick="quickCheckOut()">
+                            <i class="fas fa-sign-out-alt"></i> Quick Check-out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Booking Page -->
+            <div id="booking" class="page">
+                <div class="page-header">
+                    <h1>Room Booking</h1>
+                    <p>Create new room reservations</p>
+                </div>
+
+                <div class="booking-container">
+                    <div class="booking-form-card">
+                        <h3>Guest Information</h3>
+                        <form id="booking-form" class="booking-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="guest-name">Guest Name *</label>
+                                    <input type="text" id="guest-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="guest-phone">Phone Number *</label>
+                                    <input type="tel" id="guest-phone" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="guest-email">Email</label>
+                                    <input type="email" id="guest-email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="guest-id">ID Proof</label>
+                                    <input type="text" id="guest-id">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="guest-address">Address</label>
+                                <textarea id="guest-address" rows="3"></textarea>
+                            </div>
+
+                            <h3>Booking Details</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="room-type">Room Type *</label>
+                                    <select id="room-type" required onchange="updateAvailableRooms()">
+                                        <option value="">Select Room Type</option>
+                                        <option value="luxury-double">Luxury Double - ₹4,000/night</option>
+                                        <option value="deluxe-double">Deluxe Double - ₹3,000/night</option>
+                                        <option value="luxury-single">Luxury Single - ₹2,200/night</option>
+                                        <option value="deluxe-single">Deluxe Single - ₹1,200/night</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="room-number">Room Number *</label>
+                                    <select id="room-number" required>
+                                        <option value="">Select Room</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="check-in">Check-in Date *</label>
+                                    <input type="date" id="check-in" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="check-out">Check-out Date *</label>
+                                    <input type="date" id="check-out" required>
+                                </div>
+                            </div>
+
+                            <div class="booking-summary" id="booking-summary" style="display: none;">
+                                <h4>Booking Summary</h4>
+                                <div class="summary-details"></div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="resetBookingForm()">Reset</button>
+                                <button type="submit" class="btn btn-primary">Book Room</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="room-preview-card">
+                        <h3>Available Rooms</h3>
+                        <div class="room-grid" id="available-rooms-grid">
+                            <!-- Available rooms will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Management Page -->
+            <div id="rooms" class="page">
+                <div class="page-header">
+                    <h1>Room Management</h1>
+                    <p>Manage all hotel rooms and their status</p>
+                </div>
+
+                <div class="room-filters">
+                    <div class="filter-group">
+                        <label>Filter by Type:</label>
+                        <select id="room-type-filter" onchange="filterRooms()">
+                            <option value="all">All Types</option>
+                            <option value="luxury-double">Luxury Double</option>
+                            <option value="deluxe-double">Deluxe Double</option>
+                            <option value="luxury-single">Luxury Single</option>
+                            <option value="deluxe-single">Deluxe Single</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Filter by Status:</label>
+                        <select id="room-status-filter" onchange="filterRooms()">
+                            <option value="all">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="rooms-grid" id="rooms-grid">
+                    <!-- Rooms will be populated here -->
+                </div>
+            </div>
+
+            <!-- Guest Management Page -->
+            <div id="guests" class="page">
+                <div class="page-header">
+                    <h1>Guest Management</h1>
+                    <p>Manage guest information and history</p>
+                </div>
+
+                <div class="guests-table-container">
+                    <table class="data-table" id="guests-table">
+                        <thead>
+                            <tr>
+                                <th>Guest Name</th>
+                                <th>Room</th>
+                                <th>Phone</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guests-table-body">
+                            <!-- Guests data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Food Service Page -->
+            <div id="food" class="page">
+                <div class="page-header">
+                    <h1>Food Service</h1>
+                    <p>Manage food orders for hotel guests</p>
+                </div>
+
+                <div class="food-service-container">
+                    <div class="food-order-card">
+                        <h3>New Food Order</h3>
+                        <form id="food-order-form" class="food-form">
+                            <div class="form-group">
+                                <label for="order-room">Room Number *</label>
+                                <select id="order-room" required>
+                                    <option value="">Select Room</option>
+                                </select>
+                            </div>
+
+                            <div class="menu-items">
+                                <h4>Menu Items</h4>
+                                <div class="menu-grid" id="menu-grid">
+                                    <!-- Menu items will be populated here -->
+                                </div>
+                            </div>
+
+                            <div class="order-summary" id="food-order-summary">
+                                <h4>Order Summary</h4>
+                                <div class="order-items" id="order-items"></div>
+                                <div class="order-total">
+                                    Total: ₹<span id="order-total">0</span>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="clearFoodOrder()">Clear</button>
+                                <button type="submit" class="btn btn-primary">Place Order</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="active-orders-card">
+                        <h3>Active Orders</h3>
+                        <div class="active-orders-list" id="active-orders-list">
+                            <!-- Active orders will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Page -->
+            <div id="billing" class="page">
+                <div class="page-header">
+                    <h1>Billing</h1>
+                    <p>Generate bills and manage payments</p>
+                </div>
+
+                <div class="billing-container">
+                    <div class="billing-form-card">
+                        <h3>Generate Bill</h3>
+                        <form id="billing-form" class="billing-form">
+                            <div class="form-group">
+                                <label for="bill-room">Room Number *</label>
+                                <select id="bill-room" required onchange="loadBillDetails()">
+                                    <option value="">Select Room</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="generateBill()">Generate Bill</button>
+                        </form>
+                    </div>
+
+                    <div class="bill-preview-card">
+                        <div class="bill-content" id="bill-content">
+                            <div class="bill-placeholder">
+                                <i class="fas fa-receipt"></i>
+                                <p>Select a room to generate bill</p>
+                            </div>
+                        </div>
+                        <div class="bill-actions" id="bill-actions" style="display: none;">
+                            <button class="btn btn-success" onclick="printBill()">
+                                <i class="fas fa-print"></i> Print Bill
+                            </button>
+                            <button class="btn btn-info" onclick="downloadBill()">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                            <button class="btn btn-primary" onclick="processCheckout()">
+                                <i class="fas fa-sign-out-alt"></i> Process Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page">
+                <div class="page-header">
+                    <h1>Reports</h1>
+                    <p>View analytics and generate reports</p>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>Occupancy Report</h3>
+                        <canvas id="occupancyReportChart"></canvas>
+                    </div>
+                    <div class="report-card">
+                        <h3>Revenue Report</h3>
+                        <canvas id="revenueReportChart"></canvas>
+                    </div>
+                    <div class="report-card">
+                        <h3>Food Service Report</h3>
+                        <canvas id="foodReportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings" class="page">
+                <div class="page-header">
+                    <h1>Settings</h1>
+                    <p>Configure system preferences</p>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <h3>Hotel Information</h3>
+                        <form id="hotel-settings-form">
+                            <div class="form-group">
+                                <label for="hotel-name">Hotel Name</label>
+                                <input type="text" id="hotel-name" value="Grand Hotel">
+                            </div>
+                            <div class="form-group">
+                                <label for="hotel-address">Address</label>
+                                <textarea id="hotel-address" rows="3">123 Main Street, City, State 12345</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="hotel-phone">Phone</label>
+                                <input type="tel" id="hotel-phone" value="+1 234 567 8900">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>System Preferences</h3>
+                        <div class="preference-item">
+                            <label>Auto-save Data</label>
+                            <label class="switch">
+                                <input type="checkbox" id="auto-save" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <label>Email Notifications</label>
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <label>Dark Mode</label>
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals and Overlays -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal" id="confirmation-modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirm Action</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modal-confirm" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
